@@ -190,11 +190,13 @@ class GroupMagnitudeImportance(Importance):
             if not isinstance(layer, tuple(self.target_types)):
                 continue
             ####################
-            # Conv/Linear Output
+            # Conv/Linear Output, Depthwise Conv Input/Output
             ####################
             if prune_fn in [
                 function.prune_conv_out_channels,
                 function.prune_linear_out_channels,
+                function.prune_depthwise_conv_in_channels,
+                function.prune_depthwise_conv_out_channels
             ]:
                 if hasattr(layer, "transposed") and layer.transposed:
                     w = layer.weight.data.transpose(1, 0)[idxs].flatten(1)
@@ -229,7 +231,7 @@ class GroupMagnitudeImportance(Importance):
                 local_imp = local_imp[idxs]
                 group_imp.append(local_imp)
                 group_idxs.append(root_idxs)
-
+                
             ####################
             # BatchNorm
             ####################
